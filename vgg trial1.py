@@ -45,6 +45,8 @@ hist = model.fit(traindata, validation_data=testdata, epochs=100, callbacks=[che
 model = keras.models.load_model("vgg16_1.keras")
 model.save("vgg16_1.h5")
 
+
+
 #7
 import matplotlib.pyplot as plt
 plt.plot(hist.history["acc"])
