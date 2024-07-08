@@ -1,49 +1,83 @@
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import messagebox
 from PIL import Image, ImageTk
 import cv2
 import numpy as np
 from PIL import Image
-def split_handwritten_text(image_path, output_dir):
- # קרא את התמונה
-    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
-    # סף את התמונה כדי להפוך אותה לשחור-לבן
-    _, thresh = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY_INV)
-    # מצא קונטורים (מתארים) של האותיות
-    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL,cv2.CHAIN_APPROX_SIMPLE)
-    # סדר את הקונטורים משמאל לימין
-    contours = sorted(contours, key=lambda ctr:
-    cv2.boundingRect(ctr)[0])
- # עבור כל קונטור, חתוך את האזור הרלוונטי ושמור אותו כתמונה נפרדת
-    for i, contour in enumerate(contours):
-        x, y, w, h = cv2.boundingRect(contour)
-        letter_crop = img[y:y+h, x:x+w]
-        letter_img = Image.fromarray(letter_crop)
-        letter_img.save(f"{output_dir}/letter_{i}.png")
+import cutsPictures
+import numpy as np
+import pandas as pd
+from keras.preprocessing import image
+from keras.models import load_model
+
+#calls model
+# saved_model = load_model("vgg16_1.h5")
+def preprocess_image(img_path):
+    img = image.load_img(img_path, target_size=(224, 224))
+    img = np.asarray(img)
+    img = np.expand_dims(img, axis=0)
+    img = img / 255.0 
+    return img
+
 def upload_image():
-    # Open a file dialog to select an image
+    # select image
     file_path = filedialog.askopenfilename()
     if file_path:
-        # Load the image using PIL
+        # Load the image
         img = Image.open(file_path)
         img = ImageTk.PhotoImage(img)
+        
+        # Display the image in a label
+        # img_label.config(image=img)
+        # img_label.image = img
 
-        # Create a label to display the image
+        # Cuts the image
+        # cuts_output_dir = r"C:\Users\necha\Desktop\LetterProject\cuts"
+        # cutsPictures.split_handwritten_text(file_path, cuts_output_dir)
 
-        split_handwritten_text(file_path,r"C:\Users\necha\Desktop\LetterProject\cut")
+        # results = []
+        # for file in cuts_output_dir:
+        #     img_path = file.path
+        #     img_array = preprocess_image(img_path)
+        #     output = saved_model.predict(img_array)
+            
+        #     # List of categories
+        #     categories = [str(i) for i in range(1, 26)]
+            
+        #     # Predictions
+        #     predicted_index = np.argmax(output)
+        #     predicted_category = categories[predicted_index]
+        #     predicted_probability = np.max(output)
+        #     results.append((predicted_category, predicted_probability))
+        
+        # # top 2 predictions
+        # top_2_results = sorted(results, key=lambda x: x[1], reverse=True)[:2]
+        # top_2_categories = [result[0] for result in top_2_results]
 
-# Create the main window
+        # # Load explanations
+        # excel_path = r"C:\Users\necha\Desktop\LetterProject\letterExplanation.xlsx"  # Update with your actual path
+        # df = pd.read_excel(excel_path)
+        
+        # explanations = []
+        # for category in top_2_categories:
+        #     row_index = int(category) - 1  
+        #     explanation = df.iloc[row_index, 2]  
+        #     explanations.append(explanation)
+        
+        # messagebox.showinfo("Predictions:", f" {top_2_categories} and {explanations}")
+#main window
 root = tk.Tk()
 root.title("Graphology project")
 root.geometry("400x400")
 
-# Create a label with central text
+#label with central text
 title_label = tk.Label(root, text="Upload an Image of your handwriting, lowercase only.", font=("Comic Sans MS", 12))
 title_label.pack(pady=20)
 
-# Create an upload button
+#upload button
 upload_button = tk.Button(root, text="Upload Image", command=upload_image, font=("Comic Sans MS", 12), bg="blue")
 upload_button.pack(pady=10)
 
-# Run the main loop
+# main loop
 root.mainloop()

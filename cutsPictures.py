@@ -15,7 +15,21 @@ def split_handwritten_text(image_path, output_dir):
     for i, contour in enumerate(contours):
         x, y, w, h = cv2.boundingRect(contour)
         letter_crop = img[y:y+h, x:x+w]
-        letter_img = Image.fromarray(letter_crop)
-        letter_img.save(f"{output_dir}/letter_{i}.png")
-# שימוש בפונקציה
-split_handwritten_text(r"C:\Users\necha\Desktop\Letter progect\pic2.jpg",r"C:\Users\necha\Desktop\Letter progect\cuts")
+        # בודק גודל מינימלי
+      #   if w < 10 or h < 30:
+      #       continue
+      #    # שינוי גודל התמונה לגודל מקסימלי של 224x224 תוך שמירה על יחס גובה-רוחב
+      #   letter_pil = Image.fromarray(letter_crop)
+      #   letter_pil.thumbnail((224, 224))
+      #   #חותך את האות
+      #   letter_img = Image.fromarray(letter_crop)
+      #     # צור תמונה בגודל 224x224 עם רקע לבן
+      #   letter_img = Image.new("L", (224, 224), 255)
+      #   # מחשב את מיקום האות במרכז הרקע הלבן
+      #   offset = ((224 - letter_pil.width) // 2, (224 - letter_pil.height) // 2)
+        
+      # #   # הדבק את האות במרכז הרקע הלבן
+      # #   letter_img.paste(letter_pil, offset)
+        letter_crop.ravel(f"{output_dir}/letter_{i}.png")
+split_handwritten_text(r"C:\Users\necha\Desktop\LetterProject\Libby.jpg", r"C:\Users\necha\Desktop\LetterProject\cuts")
+
